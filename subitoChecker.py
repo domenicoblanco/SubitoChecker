@@ -55,14 +55,12 @@ def checkAndCleanInput():
     
     args.url = args.url.split('&o=')[0]
 
-    args.includeall = args.includeall is not None
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url', help='A Subito.it search URL', type=str, required=True)
     parser.add_argument('-b', '--budget', help='Your maximum budget', type=float, required=True)
     parser.add_argument('-m', '--message', help='The message that will sent to your Telegram account', default='Found article in your budget!', type=str)
-    parser.add_argument('-a', '--includeall', help='Sends also items without price')
+    parser.add_argument('-a', '--includeall', help='Sends also items without price', action='store_true')
 
 
     args = parser.parse_args()
