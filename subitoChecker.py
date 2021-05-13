@@ -52,7 +52,11 @@ def prepareSoup(page = 1):
 def scrapePage(itemsContainer):
     for item in itemsContainer.find_all('div', {'class':'items__item'}):
         if priceIsGood(item):
-            scrapedItem['name'] = item.find('h2', {'class':'ItemTitle-module_item-title__39PNS'}).text
+            scrapedItem['name'] = item.find('h2', {'class':'ItemTitle-module_item-title__39PNS'})
+            if scrapedItem['name'] is None:
+                continue
+            
+            scrapedItem['name'] = scrapedItem['name'].text
             scrapedItem['place'] = item.find('div', {'class':'item-posting-time-place'}).text.split('Oggi')[0]
             scrapedItem['url'] = item.find('a')["href"]
             sendWithTelegram()
@@ -60,24 +64,24 @@ def scrapePage(itemsContainer):
 def checkAndCleanInput():
     args = {'url': getenv('URL'),'budget':getenv('MAXIMUM_BUDGET'),'minimumbudget':getenv('MINIMUM_BUDGET'),'textmessage':getenv('CUSTOM_MESSAGE'),'includeall':getenv('INCLUDE_ITEMS_WITHOUT_PRICE'),'run_every':getenv('RUN_EVERY')}
 
-    if 'subito.it/' not in args['url'] or not len(args['url']):
+    if 'subito.it/' not in args['url'] or args['url'] is None:
         print('Wrong URL!')
         exit(0)
     
-    if not len(args['budget']):
+    if args['budget'] is None:
         print('Wrong maximum budget!')
         exit(0)
 
-    if not len(args['minimumbudget']):
+    if args['minimumbudget'] is None:
         args['minimumbudget'] = 0
     
-    if not len(args['textmessage']):
+    if args['textmessage'] is None:
         args['textmessage'] = 'Found article in your budget!'
     
-    if not len(args['includeall']):
+    if args['includeall'] is None:
         args['includeall'] = False
     
-    if not len(args['run_every']):
+    if args['run_every'] is None:
         args['run_every'] = 60
 
     args['url'] = args['url'].split('&o=')[0]
@@ -92,11 +96,10 @@ if __name__ == '__main__':
     args = checkAndCleanInput()
 
     while(True):
-        soup = prepareSoup().find('div', {'class':'skeletons'})   
+        soup = prepareSoup().find('div', {'class':'items'})   
 
         lastPageNumber = getLastPage(soup.find('div', {'class':'pagination-container'}))
         scrapedItem = {}
-        lastPageNumber = 3
 
         for page in range(2, lastPageNumber+1):
             scrapePage(soup)
@@ -107,6 +110,7 @@ if __name__ == '__main__':
                 sleep(5)
 
         scrapePage(soup)
+        print('Sleeping')
         sleep(args['run_every'])
         print('Checking again')
     
