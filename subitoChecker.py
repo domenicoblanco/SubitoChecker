@@ -15,7 +15,7 @@ def getLastPage(container):
     return lastPage
 
 def sendWithTelegram():
-    message = "*" + args.textmessage + "*\n[" + scrapedItem['name'] + "](" + scrapedItem['url'] + ")\n💶 Price: €" + str(scrapedItem['price']) + '\n📍 Place: ' + scrapedItem['place']
+    message = "*" + args['textmessage'] + "*\n[" + scrapedItem['name'] + "](" + scrapedItem['url'] + ")\n💶 Price: €" + str(scrapedItem['price']) + '\n📍 Place: ' + scrapedItem['place']
     message += '\n📦 Shipping available' if scrapedItem['shipping'] else '\nShipping not available'
     
     for id in getenv('TELEGRAM_ID').split(','):
@@ -29,7 +29,7 @@ def priceIsGood(item):
 
     if scrapedPrice is None:
         scrapedItem['price'] = 'N.D.'
-        if args.includeall:
+        if args['includeall']:
             return True
             
         print("Missing price...", "Skipping")
@@ -43,10 +43,10 @@ def priceIsGood(item):
     
     scrapedItem['price'] = int(scrapedPrice)
 
-    return scrapedItem['price'] <= args.budget and scrapedItem['price'] >= args.minimumbudget
+    return scrapedItem['price'] <= args['budget'] and scrapedItem['price'] >= args['minimumbudget']
 
 def prepareSoup(page = 1):
-    body = request('GET', args.url + '&o=' + str(page)).text
+    body = request('GET', args['url'] + '&o=' + str(page)).text
     return BeautifulSoup(body, features='html.parser')
 
 def scrapePage(itemsContainer):
@@ -59,14 +59,33 @@ def scrapePage(itemsContainer):
 
 def checkAndCleanInput():
     args = {'url': getenv('URL'),'budget':getenv('MAXIMUM_BUDGET'),'minimumbudget':getenv('MINIMUM_BUDGET'),'textmessage':getenv('CUSTOM_MESSAGE'),'includeall':getenv('INCLUDE_ITEMS_WITHOUT_PRICE')}
-    if 'subito.it/' not in args.url:
+
+    if 'subito.it/' not in args['url'] or not len(args['url']):
         print('Wrong URL!')
         exit(0)
     
-    args.url = args.url.split('&o=')[0]
+    if not len(args['budget']):
+        print('Wrong maximum budget!')
+        exit(0)
+
+    if not len(args['minimumbudget']):
+        args['minimumbudget'] = 0
+    
+    if not len(args['textmessage']):
+        args['textmessage'] = 'Found article in your budget!'
+    
+    if not len(args['includeall']):
+        args['includeall'] = False
+
+    args['url'] = args['url'].split('&o=')[0]
+    args['budget'] = float(args['budget'])
+    args['minimumbudget'] = float(args['minimumbudget'])
+    args['includeall'] = bool(args['includeall'])
+
+    return args
 
 if __name__ == '__main__':
-    checkAndCleanInput()
+    args = checkAndCleanInput()
     soup = prepareSoup().find('div', {'class':'skeletons'})   
 
     lastPageNumber = getLastPage(soup.find('div', {'class':'pagination-container'}))
