@@ -4,12 +4,14 @@ FROM python:3.9.4-alpine3.13
 RUN set -eux && \
     apk --update add --no-cache git && \
     pip install --upgrade pip && \
-    git clone https://github.com/domenicoblanco/SubitoChecker && \
-    cd SubitoChecker && \
+    cd / && \
+    git clone https://github.com/domenicoblanco/SubitoChecker
+
+RUN cd SubitoChecker && \
     pip install -r requirements.txt
 
-# run without privileges
-USER nobody
+# add to cron
+RUN echo '*/5 * * * * python3 /SubitoChecker/SubitoChecker.py' > /etc/crontabs/root
 
 # start
-CMD ["python3 SubitoChecker.py"]
+CMD ["crond", "-l 2", "-f"]
