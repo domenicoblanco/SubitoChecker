@@ -1,0 +1,12 @@
+subitoChecker:
+    image: subitoChecker
+    container_name: subitoChecker
+    environment:
+        - TELEGRAM_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11  # Your bot token obtained from @BotFather
+        - TELEGRAM_ID=00000000                                      # Your Telegram ID, you can add also multiple IDs comma separated
+        - URL=""                                                    # URL of Subito search
+        - MAXIMUM_BUDGET=100                                        # Your maximum budget
+        - MINIMUM_BUDGET=0                                          # Your minimum budget
+        - CUSTOM_MESSAGE=""                                         # A custom message sent to Telegram
+        - INCLUDE_ITEMS_WITHOUT_PRICE=false                         # A Boolean to look also for item without price or not
+    restart: unless-stopped

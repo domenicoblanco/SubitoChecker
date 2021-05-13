@@ -1,8 +1,6 @@
-from typing import Text
 from bs4 import BeautifulSoup
 from requests import request
 from os import getenv
-import argparse
 from time import sleep
 
 
@@ -60,6 +58,7 @@ def scrapePage(itemsContainer):
             sendWithTelegram()
 
 def checkAndCleanInput():
+    args = {'url': getenv('URL'),'budget':getenv('MAXIMUM_BUDGET'),'minimumbudget':getenv('MINIMUM_BUDGET'),'textmessage':getenv('CUSTOM_MESSAGE'),'includeall':getenv('INCLUDE_ITEMS_WITHOUT_PRICE')}
     if 'subito.it/' not in args.url:
         print('Wrong URL!')
         exit(0)
@@ -67,14 +66,7 @@ def checkAndCleanInput():
     args.url = args.url.split('&o=')[0]
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--url', help='A Subito.it search URL', type=str, required=True)
-    parser.add_argument('-b', '--budget', help='Your maximum budget', type=float, required=True)
-    parser.add_argument('-m', '--minimumbudget', help='Minimum accepted price', type=float, default=0)
-    parser.add_argument('-t', '--textmessage', help='The message that will sent to your Telegram account', default='Found article in your budget!', type=str)
-    parser.add_argument('-a', '--includeall', help='Sends also items without price', action='store_true')
-    args = parser.parse_args()
-
+    checkAndCleanInput()
     soup = prepareSoup().find('div', {'class':'skeletons'})   
 
     lastPageNumber = getLastPage(soup.find('div', {'class':'pagination-container'}))
