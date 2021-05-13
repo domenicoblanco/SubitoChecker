@@ -5,13 +5,13 @@ RUN set -eux && \
     apk --update add --no-cache git && \
     pip install --upgrade pip && \
     cd / && \
-    git clone https://github.com/domenicoblanco/SubitoChecker
+    git clone https://github.com/domenicoblanco/SubitoChecker && \
+    chmod 775 -R SubitoChecker 
+
+USER nobody
 
 RUN cd SubitoChecker && \
     pip install -r requirements.txt
 
-# add to cron
-RUN echo '*/5 * * * * python3 /SubitoChecker/SubitoChecker.py' > /etc/crontabs/root
-
 # start
-CMD ["crond", "-l 2", "-f"]
+CMD ["python3 /SubitoChecker/SubitoChecker.py"]

@@ -58,7 +58,7 @@ def scrapePage(itemsContainer):
             sendWithTelegram()
 
 def checkAndCleanInput():
-    args = {'url': getenv('URL'),'budget':getenv('MAXIMUM_BUDGET'),'minimumbudget':getenv('MINIMUM_BUDGET'),'textmessage':getenv('CUSTOM_MESSAGE'),'includeall':getenv('INCLUDE_ITEMS_WITHOUT_PRICE')}
+    args = {'url': getenv('URL'),'budget':getenv('MAXIMUM_BUDGET'),'minimumbudget':getenv('MINIMUM_BUDGET'),'textmessage':getenv('CUSTOM_MESSAGE'),'includeall':getenv('INCLUDE_ITEMS_WITHOUT_PRICE'),'run_every':getenv('RUN_EVERY')}
 
     if 'subito.it/' not in args['url'] or not len(args['url']):
         print('Wrong URL!')
@@ -76,31 +76,39 @@ def checkAndCleanInput():
     
     if not len(args['includeall']):
         args['includeall'] = False
+    
+    if not len(args['run_every']):
+        args['run_every'] = 60
 
     args['url'] = args['url'].split('&o=')[0]
     args['budget'] = float(args['budget'])
     args['minimumbudget'] = float(args['minimumbudget'])
     args['includeall'] = bool(args['includeall'])
+    args['run_every'] = int(args['run_every'])*60
 
     return args
 
 if __name__ == '__main__':
     args = checkAndCleanInput()
-    soup = prepareSoup().find('div', {'class':'skeletons'})   
 
-    lastPageNumber = getLastPage(soup.find('div', {'class':'pagination-container'}))
-    scrapedItem = {}
-    lastPageNumber = 3
+    while(True):
+        soup = prepareSoup().find('div', {'class':'skeletons'})   
 
-    for page in range(2, lastPageNumber+1):
+        lastPageNumber = getLastPage(soup.find('div', {'class':'pagination-container'}))
+        scrapedItem = {}
+        lastPageNumber = 3
+
+        for page in range(2, lastPageNumber+1):
+            scrapePage(soup)
+            soup = prepareSoup(page)
+
+            if not page%12:
+                print('Waiting to prevent too much requests in a few seconds...')
+                sleep(5)
+
         scrapePage(soup)
-        soup = prepareSoup(page)
-
-        if not page%12:
-            print('Waiting to prevent too much requests in a few seconds...')
-            sleep(5)
-
-    scrapePage(soup)
+        sleep(args['run_every'])
+        print('Checking again')
     
 
 
