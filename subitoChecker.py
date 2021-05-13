@@ -65,8 +65,6 @@ def checkAndCleanInput():
         exit(0)
     
     args.url = args.url.split('&o=')[0]
-    
-    return fixIDs()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
