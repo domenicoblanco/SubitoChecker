@@ -75,7 +75,7 @@ def checkAndCleanInput():
     if args['minimumbudget'] is None:
         args['minimumbudget'] = 0
     
-    if args['textmessage'] is None:
+    if args['textmessage'] is None or not len(args['textmessage']):
         args['textmessage'] = 'Found article in your budget!'
     
     if args['includeall'] is None:
