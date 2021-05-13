@@ -87,7 +87,7 @@ def checkAndCleanInput():
     args['url'] = args['url'].split('&o=')[0]
     args['budget'] = float(args['budget'])
     args['minimumbudget'] = float(args['minimumbudget'])
-    args['includeall'] = args['includeall'].lower() == 'true'
+    args['includeall'] = str(args['includeall'].lower()) == 'true'
     args['run_every'] = int(args['run_every'])*60
 
     return args
