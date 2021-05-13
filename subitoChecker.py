@@ -15,8 +15,8 @@ def getLastPage(container):
     return lastPage
 
 def sendWithTelegram():
-    message = "*" + args['textmessage'] + "*\n[" + scrapedItem['name'] + "](" + scrapedItem['url'] + ")\n💶 Price: €" + str(scrapedItem['price']) + '\n📍 Place: ' + scrapedItem['place']
-    message += '\n📦 Shipping available' if scrapedItem['shipping'] else '\nShipping not available'
+    message = "*" + args['textmessage'] + "*\n[" + scrapedItem['name'] + "](" + scrapedItem['url'] + ")\n💶 Price: " + scrapedItem['price'] + '\n📍 Place: ' + scrapedItem['place']
+    message += '\n📦 Shipping available' if scrapedItem['shipping'] else '\n🚗 Shipping not available'
     
     for id in getenv('TELEGRAM_ID').split(','):
         res = request('POST', 'https://api.telegram.org/bot' + getenv('TELEGRAM_TOKEN') + '/sendMessage?chat_id=' + id + '&parse_mode=markdown&text=' + message).json()
@@ -41,9 +41,9 @@ def priceIsGood(item):
         scrapedPrice = int(scrapedPrice.split('Spedizion')[0])
         scrapedItem['shipping'] = True
     
-    scrapedItem['price'] = int(scrapedPrice)
+    scrapedItem['price'] = '€' + str(scrapedPrice)
 
-    return scrapedItem['price'] <= args['budget'] and scrapedItem['price'] >= args['minimumbudget']
+    return int(scrapedPrice) <= args['budget'] and int(scrapedPrice) >= args['minimumbudget']
 
 def prepareSoup(page = 1):
     body = request('GET', args['url'] + '&o=' + str(page)).text
@@ -75,7 +75,7 @@ def checkAndCleanInput():
     if args['minimumbudget'] is None:
         args['minimumbudget'] = 0
     
-    if args['textmessage'] is None or not len(args['textmessage']):
+    if args['textmessage'] is None:
         args['textmessage'] = 'Found article in your budget!'
     
     if args['includeall'] is None:
@@ -87,7 +87,7 @@ def checkAndCleanInput():
     args['url'] = args['url'].split('&o=')[0]
     args['budget'] = float(args['budget'])
     args['minimumbudget'] = float(args['minimumbudget'])
-    args['includeall'] = bool(args['includeall'])
+    args['includeall'] = args['includeall'].lower() == 'true'
     args['run_every'] = int(args['run_every'])*60
 
     return args
