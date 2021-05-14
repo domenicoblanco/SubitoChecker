@@ -3,12 +3,13 @@ subitoChecker:
     build: .
     container_name: subitoChecker
     environment:
-        - TELEGRAM_TOKEN="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"  # Your bot token obtained from @BotFather
+        - TELEGRAM_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11    # Your bot token obtained from @BotFather
         - TELEGRAM_ID=00000000                                        # Your Telegram ID, you can add also multiple IDs comma separated
-        - URL=                                                        # URL of Subito search
+        - URL=https://www.subito.it/                                  # URL of Subito search
         - MAXIMUM_BUDGET=100                                          # Your maximum budget
         - MINIMUM_BUDGET=0                                            # Your minimum budget, default 0
         - CUSTOM_MESSAGE=                                             # A custom message sent to Telegram
         - INCLUDE_ITEMS_WITHOUT_PRICE=false                           # A Boolean to look also for item without price
         - RUN_EVERY=5                                                 # Run this script every x minutes, default 60
+        - MONGO_SCHEMA=mongodb://                                     # Your MongoDB URL                               
     restart: unless-stopped
