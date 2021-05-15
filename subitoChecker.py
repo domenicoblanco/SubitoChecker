@@ -56,7 +56,7 @@ class SubitoChecker():
             print('Wrong URL!')
             exit(0)
 
-        if self._budget > 0:
+        if self._budget <= 0:
             print('Wrong maximum budget!')
             exit(0)
 
