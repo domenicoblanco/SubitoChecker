@@ -85,7 +85,7 @@ class SubitoChecker():
                     self._sendWithTelegram(data)
 
     def _priceIsGood(self, item: Tag, data: dict) -> Tuple[bool, dict]:
-        scrapedPrice = item.find('p', {'class':'classes_price__HmHqw'})
+        scrapedPrice = item.select_one('p.classes_price__HmHqw')
         data['shipping'] = False
         
         if scrapedPrice is None:
@@ -112,9 +112,9 @@ class SubitoChecker():
         return BeautifulSoup(body, features='html.parser').select_one('div.items')
 
     def _searchInDb(self, item: Tag, data: dict) -> Tuple[bool, dict]:
-        if self._useMongo and item.find('a') is not None:
+        if self._useMongo and item.select_one('a') is not None:
             data['_id'] = item.select_one('a')['href']
-            query = self._collection.find_one({'_id':data['_id']})
+            query = self._collection.select_one(f'#{data['_id']}')
 
             if query is None:
                 return True, data
