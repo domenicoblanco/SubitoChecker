@@ -147,7 +147,7 @@ class SubitoChecker():
     def _getDocumentsFromCollection(self) -> list:
         if self._useMongo:
             docs = list(self._collection.find())
-            return (doc['_id'] for doc in docs)
+            return list(doc['_id'] for doc in docs)
         
         return []
     
