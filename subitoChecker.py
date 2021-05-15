@@ -37,7 +37,7 @@ class SubitoChecker():
 
     def _connectToDB(self) -> collection:
         if self._useMongo:
-            client = MongoClient(self._mongo, authSoruce='admin')
+            client = MongoClient(self._mongo)
             return client.SubitoChecker.items
         return []
 
