@@ -108,7 +108,7 @@ class SubitoChecker():
         return int(scrapedPrice) <= self._budget and int(scrapedPrice) >= self._minimumbudget, data
 
     def _obtainSoup(self, page: int = 1):
-        body = request('GET',  f'{self._url}&o={str(page).text}')
+        body = request('GET',  f'{self._url}&o={str(page)}')
         return BeautifulSoup(body, features='html.parser').select_one('div.items')
 
     def _searchInDb(self, item: Tag, data: dict) -> Tuple[bool, dict]:
