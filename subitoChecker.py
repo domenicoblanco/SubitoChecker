@@ -109,7 +109,7 @@ class SubitoChecker():
 
     def _obtainSoup(self, page: int = 1):
         body = request('GET',  f'{self._url}&o={str(page)}')
-        return BeautifulSoup(body, features='html.parser').select_one('div.items')
+        return BeautifulSoup(body.text, features='html.parser').select_one('div.items')
 
     def _searchInDb(self, item: Tag, data: dict) -> Tuple[bool, dict]:
         if self._useMongo and item.select_one('a') is not None:
