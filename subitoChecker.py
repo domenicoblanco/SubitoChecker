@@ -114,7 +114,7 @@ class SubitoChecker():
     def _searchInDb(self, item: Tag, data: dict) -> Tuple[bool, dict]:
         if self._useMongo and item.select_one('a') is not None:
             data['_id'] = item.select_one('a')['href']
-            query = self._collection.select_one(f"#{data['_id']}")
+            query = self._collection.find_one({'_id':data['_id']})
 
             if query is None:
                 return True, data
