@@ -30,7 +30,7 @@ class SubitoChecker():
             
             self._removeOldDataFromDb()
             
-            print(f'Sleeping for {str(self._runEvery)} minutes.')
+            print(f'Sleeping for {str(self._runEvery)} seconds.')
             sleep(self._runEvery)
             print('Checking again')
 
